@@ -11,9 +11,8 @@
 class seg
 {
   public:
-    seg(int pin);
-    void dot();
-    void dash();
+    seg(int rows, int columns, int *top_pins, int *bottom_pins, int *mux_pins)
+    void write();
  private:
     int _pin;
 };
