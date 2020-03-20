@@ -11,10 +11,17 @@
 class seg
 {
   public:
-    seg(int rows, int columns, int *top_pins, int *bottom_pins, int *mux_pins)
+    seg(int digits, int *char_pins, int *mux_pins);
     void write();
- private:
-    int _pin;
+    void master();
+    void slave();
+    bool isConnected();
+    static void master();
+    static void slave
+  private:
+    extern const int digitCodeMap[];
+    static int size();
+    static void clear();
 };
 
 #endif
