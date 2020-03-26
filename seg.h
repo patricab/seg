@@ -10,18 +10,26 @@
 
 class seg
 {
-  public:
-    seg(int digits, int *char_pins, int *mux_pins);
-    void write();
-    void master();
-    void slave();
-    bool isConnected();
-    static void master();
-    static void slave
-  private:
-    extern const int digitCodeMap[];
-    static int size();
-    static void clear();
-};
+   public:
+      // Methods
+      seg(int *char_pins, int *mux_pins);
+      void write(int number);
+      static bool isConnected();
+      static void master();
+      static void slave(int address, int num_devices);
 
+   private:
+      // Variables/arrays
+      // extern const int digitCodeMap[];
+      extern int _num_devices;
+      extern int _address;
+      extern int _char[];
+      extern int _mux[];
+      int digit;
+      int pin;
+
+      // Methods
+      static void clear();
+      static int size(int *arr);
+};
 #endif
