@@ -23,8 +23,8 @@ class seg
       // extern const int digitCodeMap[];
       extern int _num_devices;
       extern int _address;
-      extern int _char[];
-      extern int _mux[];
+      extern int _char[8];
+      extern int _mux[5];
       int digit;
       int pin;
 

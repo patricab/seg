@@ -1,6 +1,7 @@
 #include "Arduino.h"
 #include "Wire.h"
 #include "seg.h"
+#include "math.h"
 
 // digitCodeMap: List of indexes for segment pins (character pins)
 // 0 = a, 1 = b, 2 = c, 3 = d, 4 = e, 5 = f, 6 = d
@@ -17,32 +18,51 @@ const int digitCodeMap[10][8] = {
    {0, 1, 2, 3, 5, 6, 0, 0} // 9
 }
 
+// Return size of array
+template <class T, std::size_t N>
+constexpr std::size_t size(const T (&array)[N]) noexcept
+{
+   return N;
+}
+
 // Constructor
 seg::seg(int *char_pins, int *mux_pins) {
-   _char = char_pins;
-   _mux = mux_pins;
+   // Copy input to private arrays
+   for (int i = 0; i < size(char_pins); i++) {
+      _char[i] = char_pins[i];
+   }
+   for (int k = 0; k < size(mux_pins); k++) {
+      _mux[k] = mux_pins[k];
+   }
 
    // Declare pins as outputs
-   for (int i = 0; i <= seg::size(_char); i++) {
+   for (int i = 0; i < size(_char); i++) {
       pinMode(_char[i], OUTPUT);
       digitalWrite(_char[i], HIGH);
    }
-   for (int i = 0; i <= seg::size(_mux); i++) {
+   for (int i = 0; i < size(_mux); i++) {
       pinMode(_mux[i], OUTPUT);
+   }
+}
+
+// Clear segment
+void seg::clear() {
+   for (int i = 0; i < size(_char); i++) {
+      digitalWrite(_char[i], HIGH);
    }
 }
 
 // Write to segment block
 void seg::write(int number) {
    // Find size/last index of mux_pins
-   int m = seg::size(_mux);
+   int m = size(_mux) - 1;
 
    // Loop through *number*
-   while (number > 1) {
+   while (m > -1) {
       // Clear display
       seg::clear();
       // Set MUX pins
-      for (int i = 0; i <= seg::size(_mux); i++) {
+      for (int i = m; i >= 0; i--) {
          if (i == m) {
             digitalWrite(_mux[i], HIGH);
          }
@@ -51,7 +71,7 @@ void seg::write(int number) {
          }
       }
       /// Print to segment display
-      digit = (number % 10);
+      digit = number % 10;
       // Set relevant character pins
       for (int i = 0; i < 8; i++) {
          pin = digitCodeMap[digit][i];
@@ -59,21 +79,10 @@ void seg::write(int number) {
       }
       ///
       m--;
-      number /= 10;
+      number = floor(number / 10);
    }
 }
 
-// Return size of array
-int seg::size(int *arr) {
-   return sizeof(arr)/sizeof(arr[0]);
-}
-
-// Clear segment
-void seg::clear() {
-   for (int i = 0; i <= seg::size(_char); i++) {
-      digitalWrite(_char[i], HIGH);
-   }
-}
 
 /// I2C Configuration
 
